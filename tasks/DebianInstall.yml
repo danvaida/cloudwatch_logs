@@ -8,5 +8,10 @@
     update_cache: yes
 
 - name: "Install AWS CloudWatch Logs Agent"
-  shell: python /tmp/awslogs-agent-setup.py -n -r {{ ansible_ec2_placement_region }} -c /etc/awslogs/awslogs.conf
-
+  shell:
+    "python /tmp/awslogs-agent-setup.py \
+     --non-interactive \
+     --region {{ ansible_ec2_placement_region }} \
+     --configfile /etc/awslogs/awslogs.conf"
+  notify: restart awslogs service
+  when: cloudwatch_agent_config|changed or cloudwatch_agent_fetch|changed
